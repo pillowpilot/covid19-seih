@@ -2,16 +2,11 @@ import unittest
 import numpy as np
 import pandas as pd
 from SEIH import SEIH
-from DataStructures import SEIHParameters, InitialConditions, TimeIntervals
+from DataStructures import SEIHParameters, InitialConditions, TimeIntervals, RealData
+from Utilities import read_data_file
 
 
 class SEIHTest(unittest.TestCase):
-    def test_random_input_on_evaluate(self):  # TODO Remove!
-        seih = SEIH()
-        y = np.array([1, 2, 3])
-        t = 1.14
-        seih.evaluate(t, t)
-
     def test_captured_input_on_evaluate(self):
         param = SEIHParameters()
         param.contact = np.array([1, 1, 0.3000])
@@ -35,11 +30,21 @@ class SEIHTest(unittest.TestCase):
         init.H = 1
         init.D = 0
 
-        x = np.array([2.3977, 0.4832, 0.2220, 0.9773, 0.1514,
+        infected_data = read_data_file('testing_resources/cum_world.dat')
+        dead_data = read_data_file('testing_resources/dcm_world.dat')
+        recovered_data = read_data_file('testing_resources/rcm_world.dat')
+        real_data = RealData(infected_data, dead_data, recovered_data)
+
+        # TODO Verify if this makes sense!
+        self.delayInfected: int = init.t.toordinal() - real_data.infected['date'][0].toordinal() + 1
+        self.delayDead: int = real_data.dead['date'][0].toordinal() - init.t.toordinal() + 1
+        self.time: int = real_data.infected['date'][self.delayInfected:]
+
+        y = np.array([2.3977, 0.4832, 0.2220, 0.9773, 0.1514,
                       0.6609, 0.3833, 0.6626, 0.3076, 0.1451,
                       0.1039, 0.4661, 0.6898, 0.6328])  # TODO Maybe make this a column array
         
-        seih = SEIH(param, time_intervals, init, x)
+        seih = SEIH(param, time_intervals, init, real_data, y)
 
 
 if __name__ == '__main__':

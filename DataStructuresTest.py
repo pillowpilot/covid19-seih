@@ -41,7 +41,7 @@ class RealDataTest(unittest.TestCase):
         infected_data = read_data_file('testing_resources/cum_world.dat')
         dead_data = read_data_file('testing_resources/dcm_world.dat')
         recovered_data = read_data_file('testing_resources/rcm_world.dat')
-        read_data = RealData(infected_data, dead_data, recovered_data)
+        real_data = RealData(infected_data, dead_data, recovered_data)
 
 
 if __name__ == '__main__':

@@ -30,9 +30,9 @@ class SEIH:
         self.E_0: float = np.sum(self.I_0) * self.ro
 
         self.y_0 = np.zeros([10, 1])
-        self.y_0[0:2] = [self.param.N - self.E_0 - np.sum(self.I_0), self.E_0]
+        self.y_0[0:2] = np.reshape([self.param.N - self.E_0 - np.sum(self.I_0), self.E_0], (2, 1))
         self.y_0[2:5] = self.I_0
-        self.y_0[5:10] = [self.Q_0, self.Rh_0, self.H_0, self.R_0, self.D_0]
+        self.y_0[5:10] = np.reshape([self.Q_0, self.Rh_0, self.H_0, self.R_0, self.D_0], (5, 1))
 
         n_time_intervals: int = len(time_intervals)
 
@@ -45,20 +45,16 @@ class SEIH:
         self.delta_r = self.param.delta[1]
         self.M: np.ndarray = np.zeros([10, 10])
         self.M[0, 2:5] = (-1) * self.param.beta[0] * self.param.contact
-        self.M[1, 1:5] = [(-1) * self.param.alpha, self.param.beta[0] * self.param.contact]
+        self.M[1, 1] = (-1) * self.param.alpha
+        self.M[1, 2:5] = self.param.beta[0] * self.param.contact
         self.M[2:5, 2] = self.lmbda * self.param.gamma
-        self.M[2:5, 3:5] = (-1) * np.diag(self.param.gamma)
+        self.M[2:5, 2:5] = (-1) * np.diag(self.param.gamma)
         self.M[5:8, 2:5] = np.diag(self.param.gamma)
         self.M[5, 5] = (-1) * self.delta_l
         self.M[7, 7] = (-1) * self.delta_r
         self.M[8, 5] = self.delta_l
         self.M[8, 7] = (1 - self.param.drate[0]) * self.delta_r
         self.M[9, 7] = self.param.drate[0] * self.delta_r
-
-        # TODO Verify if this makes sense!
-        self.delayInfected: int = initial_conditions.t.toordinal() - real_data.infected['date'][0].toordinal() + 1
-        self.delayDead: int = real_data.dead['dead'][0].toordinal() - initial_conditions.t.toordinal() + 1
-        self.time: int = real_data.infected['date'][self.delayInfected:]
 
     # See https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp
     # evaluate must be callable with the signature evaluate(t, y).
@@ -67,7 +63,7 @@ class SEIH:
     # the return value shape must be the same as the shape of y.
     # TODO Define every item in y
     # TODO Make self.evaluate pure and run them in parallel?
-    def evaluate(self, time, y: np.ndarray) -> np.ndarray:
+    def evaluate(self, time: np.ndarray, y: np.ndarray) -> np.ndarray:
         assert len(y) == 10
         assert self.M.shape[0] == len(y)
         S = y[0]

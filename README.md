@@ -5,7 +5,7 @@
 - matlab2python: contains the original code in MATLAB.
 
 ## Observations
-- Most .py files will be paired with their corresponding test suite.
+- Most .py files will be paired with their corresponding test suite. **There is a sample use case in every test file**.
 - Currently the main focus is correctness. Performance will be added later.
 
 ## Libraries

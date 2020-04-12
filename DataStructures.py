@@ -30,6 +30,9 @@ class TimeIntervals:
     def __init__(self, intervals):
         self.intervals = pd.to_datetime(intervals)
 
+    def __len__(self):
+        return len(self.intervals)
+
     def __str__(self):
         return self.intervals.__str__()
 
@@ -39,6 +42,6 @@ class TimeIntervals:
 
 class RealData:
     def __init__(self, infected: pd.DataFrame, dead: pd.DataFrame, recovered: pd.DataFrame):
-        self.infected: pd.DataFrame = infected
-        self.dead: pd.DataFrame = dead
-        self.recovered: pd.DataFrame = recovered
+        self.infected: pd.DataFrame = infected.rename(columns={'count': 'infected'})
+        self.dead: pd.DataFrame = dead.rename(columns={'count': 'dead'})
+        self.recovered: pd.DataFrame = recovered.rename(columns={'count': 'recovered'})
