@@ -63,13 +63,14 @@ class SEIH:
     # the return value shape must be the same as the shape of y.
     # TODO Define every item in y
     # TODO Make self.evaluate pure and run them in parallel?
-    def evaluate(self, time: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def evaluate(self, time: int, y: np.ndarray) -> np.ndarray:
         assert len(y) == 10
         assert self.M.shape[0] == len(y)
         S = y[0]
         H = y[7]
 
-        time_interval_index = max(0, np.count_nonzero(self.time_intervals < time) - 1)
+        time_interval_index = max(0, np.count_nonzero(
+            self.time_intervals.intervals.map(pd.Timestamp.toordinal) < time) - 1)
         beta = self.param.beta[time_interval_index]
 
         self.M[0, 2:5] = (-1) * beta * self.param.contact  # This is an analogous to the same block init at __init__
@@ -79,6 +80,6 @@ class SEIH:
         H_interval_index = max(0, np.count_nonzero(self.param.Hlimit < H) - 1)
         drate = self.param.drate[H_interval_index]
 
-        self.M[8:10, 7] = np.array([1 - drate, drate]) * self.param.delta(1)
+        self.M[8:10, 7] = np.array([1 - drate, drate]) * self.param.delta[1]
 
         return self.M * y

@@ -36,15 +36,20 @@ class SEIHTest(unittest.TestCase):
         real_data = RealData(infected_data, dead_data, recovered_data)
 
         # TODO Verify if this makes sense!
-        self.delayInfected: int = init.t.toordinal() - real_data.infected['date'][0].toordinal() + 1
-        self.delayDead: int = real_data.dead['date'][0].toordinal() - init.t.toordinal() + 1
-        self.time: int = real_data.infected['date'][self.delayInfected:]
+        delay_infected: int = init.t.toordinal() - real_data.infected['date'][0].toordinal() + 1
+        delay_dead: int = real_data.dead['date'][0].toordinal() - init.t.toordinal() + 1
+        time: pd.Series = real_data.infected['date'][delay_infected:]
 
-        y = np.array([2.3977, 0.4832, 0.2220, 0.9773, 0.1514,
+        x = np.array([2.3977, 0.4832, 0.2220, 0.9773, 0.1514,
                       0.6609, 0.3833, 0.6626, 0.3076, 0.1451,
                       0.1039, 0.4661, 0.6898, 0.6328])  # TODO Maybe make this a column array
-        
-        seih = SEIH(param, time_intervals, init, real_data, y)
+
+        seih = SEIH(param, time_intervals, init, real_data, x)
+
+        y: np.ndarray = np.array([10, 0, 0, 0, 0, 0, 0, 0, 0, 0]) * 1e7
+
+        t: int = time[1].toordinal()
+        seih.evaluate(t, y)
 
 
 if __name__ == '__main__':
