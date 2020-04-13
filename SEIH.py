@@ -82,4 +82,6 @@ class SEIH:
 
         self.M[8:10, 7] = np.array([1 - drate, drate]) * self.param.delta[1]
 
-        return self.M * y
+        rhs = self.M.dot(y)
+
+        return rhs
