@@ -21,9 +21,16 @@ class SEIHParameters:
 class InitialConditions:
     def __init__(self):
         self.t = None  # TODO Add datetime type (datetime64 or something like that)
+        self.S: float = None
+        self.E: float = None
+        self.I1: float = None
+        self.I2: float = None
+        self.I3: float = None
         self.Q: float = None
         self.H: float = None
         self.D: float = None
+        self.R: float = None
+        self.Rh: float = None
 
 
 class TimeIntervals:
