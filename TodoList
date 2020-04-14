@@ -1,0 +1,3 @@
+1. Semáticamente, cuál es la diferencia entre SEIHParameters y InitialParameters?
+En el codigo MATLAB, se presentaban en dos registros (structs). Uno `init`y el otro `param`.
+Cuáles serían unos mejores nombres? o sería adecuado unificarlos?
