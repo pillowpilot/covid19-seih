@@ -2,17 +2,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
+from scipy.optimize import differential_evolution
 
 from DataStructures import SEIHParameters, InitialConditions, TimeIntervals, RealData
 from Utilities import read_data_file
 from SEIH import SEIH, buildY_0
 
 
-def main():
-    x = np.array([3.00, 0.60, 0.30, 0.20, 0.95,
-                  0.44, 0.51, 0.42, 0.02, 0.13,
-                  0.48, 0.22, 0.33, 0.80])  # Optimized values from MATLAB code
-
+def ode(x: np.ndarray, *args):
     time_intervals = TimeIntervals(['01/22/2020'])
 
     param = SEIHParameters()
@@ -31,9 +28,13 @@ def main():
 
     # This gets overwritten!
     param.beta = x[1:len(time_intervals) + 1]
-    param.drate = x[len(time_intervals) + 1:len(time_intervals) * 2 + 1]
+    param.drate = x[len(time_intervals) + 1:]
 
+    # print(x)
+    # print(x[0])
+    # print(x[1])
     param.ro = x[0]
+    param.k = x[1]
 
     initial_conditions = InitialConditions()
     initial_conditions.t = pd.to_datetime('01/22/2020')
@@ -64,12 +65,27 @@ def main():
 
     sol = solve_ivp(seih.evaluate, time_span, y_0)
 
-    cumulative_infected = sol.y[5] + sol.y[7] + sol.y[8] + sol.y[9]
+    return sol
 
-    plt.figure(1)
-    plt.plot(sol.t, cumulative_infected, sol.t, sol.y[0])
-    plt.yscale('log')
-    plt.show()
+
+def main():
+    # x = np.array([3.00, 0.60, 0.30, 0.20, 0.95,
+    #               0.44, 0.51, 0.42, 0.02, 0.13,
+    #               0.48, 0.22, 0.33, 0.80])  # Optimized values from MATLAB code
+
+    number_of_variables = 14
+    bounds = [(2, 4)] * number_of_variables
+    result = differential_evolution(ode, bounds)
+    print(result)
+
+    # solution = ode(x)
+    #
+    # cumulative_infected = solution.y[5] + solution.y[7] + solution.y[8] + solution.y[9]
+    #
+    # plt.figure(1)
+    # plt.plot(solution.t, cumulative_infected, solution.t, solution.y[0])
+    # plt.yscale('log')
+    # plt.show()
 
 
 if __name__ == '__main__':

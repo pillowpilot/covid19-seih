@@ -35,7 +35,7 @@ class SEIH:
     def __init__(self, param: SEIHParameters, time_intervals: TimeIntervals,
                  # initial_conditions: InitialConditions, real_data: RealData,
                  x: np.ndarray):
-        self.x: np.ndarray = x  # x are parameters to optimize with a metaheuristic approach ie genetic algorithms
+        #self.x: np.ndarray = x  # x are parameters to optimize with a metaheuristic approach ie genetic algorithms
         # looks like x has shape (1, 14)
 
         self.time_intervals: TimeIntervals = time_intervals
