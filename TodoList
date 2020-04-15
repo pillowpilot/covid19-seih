@@ -1,3 +1,12 @@
 1. Semáticamente, cuál es la diferencia entre SEIHParameters y InitialParameters?
 En el codigo MATLAB, se presentaban en dos registros (structs). Uno `init`y el otro `param`.
 Cuáles serían unos mejores nombres? o sería adecuado unificarlos?
+
+Minimizar el ode con los datos
+
+si el hlimit tiene 3 elementos, el drate tambien.
+param.beta y time_interval tiene la misma longitud y beta se optimiza
+
+solo se optimiza ro, beta y drate
+
+combinar initial_conditions con =0 con buildY_0

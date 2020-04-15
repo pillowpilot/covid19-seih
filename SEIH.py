@@ -17,14 +17,14 @@ def buildY_0(initial_conditions: InitialConditions, param: SEIHParameters):
     # self.param.ro = self.x[0]
     # self.ro: float = self.param.ro
 
-    I_0[0] = param.ro * Q_0
-    I_0[2] = param.ro * H_0
-    I_0[1] = ((I_0[0] + I_0[2]) * param.k) / (1 - param.k)
+    I_0[0] = param.ro * Q_0  # infectados sintomas leves (iniciales) [I1]
+    I_0[2] = param.ro * H_0  # infectados sintomas leves sin reportes (iniciales)  [I2]
+    I_0[1] = ((I_0[0] + I_0[2]) * param.k) / (1 - param.k)  # # infectados sintomas severos (iniciales)  [I3]
 
     E_0: float = np.sum(I_0) * param.ro
 
-    y_0 = np.zeros(10)
-    y_0[0:2] = np.reshape([param.N - E_0 - np.sum(I_0), E_0], (2))
+    y_0 = np.zeros(10)  # vector de variables del rhs
+    y_0[0:2] = np.reshape([param.N - E_0 - np.sum(I_0), E_0], (2))  # param.N - E_0 - np.sum(I_0) == suceptibles
     y_0[2:5] = I_0
     y_0[5:10] = np.reshape([Q_0, Rh_0, H_0, R_0, D_0], (5))
 
