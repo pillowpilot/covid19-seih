@@ -14,7 +14,7 @@ class SEIHParameterTest(unittest.TestCase):
         param.gamma = 1 / np.array([5, 14, 6])
         param.delta = 1 / np.array([9, 15])
         param.N = 1e8
-        param.In = 0
+        param.imported_cases = 0
         param.hospitalization_limit = np.array([0, 10, 50, 100, 500, 1000, 5000])
         param.ro = 2
         param.k = 1

@@ -23,7 +23,7 @@ class SEIHTest(unittest.TestCase):
         param.gamma = np.array([1.0 / 5.0, 1.0 / 14.0, 1.0 / 6.0])
         param.delta = np.array([1.0 / 9.0, 1.0 / 15.0])
         param.N = 100000000
-        param.In = 0
+        param.imported_cases = 0
         param.hospitalization_limit = np.array([0, 1000000])
         param.ro = x[0]
         param.k = 0.3

@@ -11,7 +11,7 @@ class SEIHParameters:
         self.gamma: np.ndarray = None
         self.delta: np.ndarray = None
         self.N: float = None
-        self.In: float = None
+        self.imported_cases: float = None
         self.hospitalization_limit: np.ndarray = None
         self.dead_rate: np.ndarray = None
         self.ro: float = None
@@ -19,6 +19,14 @@ class SEIHParameters:
 
 
 class ODEVariables:
+    field_index_mapping = {'susceptible': 0, 'exposed': 1, 'infected_mild': 2, 'infected_mild_unreported': 3,
+                           'infected_severe': 4, 'in_quarantine': 5, 'hospitalized': 6, 'dead': 7, 'recovered': 8,
+                           'Rh': 9}
+
+    @staticmethod
+    def to_index(field_name: str):  # TODO Discuss with Hyun. Add testing. Add inverse function
+        return ODEVariables.field_index_mapping[field_name]
+
     def __init__(self):
         self.time = None  # TODO Add datetime type (datetime64 or something like that)
         self.susceptible: float = None
@@ -30,7 +38,7 @@ class ODEVariables:
         self.hospitalized: float = None
         self.dead: float = None
         self.recovered: float = None
-        self.Rh: float = None  # TODO Better naming
+        self.Rh: float = None  # TODO Better naming. And update field_index_mapping.
 
 
 class TimeIntervals:

@@ -10,3 +10,5 @@ param.beta y time_interval tiene la misma longitud y beta se optimiza
 solo se optimiza ro, beta y drate
 
 combinar initial_conditions con =0 con buildY_0
+
+agregar la informacion sobre field_index_mapping y aplicar en todo el proyecto!
