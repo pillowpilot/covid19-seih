@@ -12,25 +12,25 @@ class SEIHParameters:
         self.delta: np.ndarray = None
         self.N: float = None
         self.In: float = None
-        self.Hlimit: np.ndarray = None
-        self.drate: np.ndarray = None
+        self.hospitalization_limit: np.ndarray = None
+        self.dead_rate: np.ndarray = None
         self.ro: float = None
         self.k: float = None  # TODO Verify at runtime (w/ __set__) that 0<=k<=1
 
 
-class InitialConditions:
+class ODEVariables:
     def __init__(self):
-        self.t = None  # TODO Add datetime type (datetime64 or something like that)
-        self.S: float = None
-        self.E: float = None
-        self.I1: float = None
-        self.I2: float = None
-        self.I3: float = None
-        self.Q: float = None
-        self.H: float = None
-        self.D: float = None
-        self.R: float = None
-        self.Rh: float = None
+        self.time = None  # TODO Add datetime type (datetime64 or something like that)
+        self.susceptible: float = None
+        self.exposed: float = None
+        self.infected_mild: float = None
+        self.infected_mild_unreported: float = None
+        self.infected_severe: float = None
+        self.in_quarantine: float = None
+        self.hospitalized: float = None
+        self.dead: float = None
+        self.recovered: float = None
+        self.Rh: float = None  # TODO Better naming
 
 
 class TimeIntervals:

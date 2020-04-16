@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
-from DataStructures import SEIHParameters, TimeIntervals, InitialConditions, RealData
+from DataStructures import SEIHParameters, TimeIntervals, ODEVariables, RealData
 from scipy.integrate import solve_ivp
 import matplotlib.pyplot as plt
 
 
-def buildY_0(initial_conditions: InitialConditions, param: SEIHParameters):
-    H_0: float = initial_conditions.H
-    D_0: float = initial_conditions.D
-    Q_0: float = initial_conditions.Q
+def buildY_0(initial_conditions: ODEVariables, param: SEIHParameters):
+    H_0: float = initial_conditions.hospitalized
+    D_0: float = initial_conditions.dead
+    Q_0: float = initial_conditions.in_quarantine
 
     Rh_0: float = 0.0
     R_0: float = 0.0
@@ -53,8 +53,8 @@ class SEIH:
         self.M[5, 5] = (-1) * delta_l
         self.M[7, 7] = (-1) * delta_r
         self.M[8, 5] = delta_l
-        self.M[8, 7] = (1 - parameters.drate[0]) * delta_r
-        self.M[9, 7] = parameters.drate[0] * delta_r
+        self.M[8, 7] = (1 - parameters.dead_rate[0]) * delta_r
+        self.M[9, 7] = parameters.dead_rate[0] * delta_r
 
     # See https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp
     # evaluate must be callable with the signature evaluate(t, y).
@@ -77,10 +77,10 @@ class SEIH:
         self.M[1, 2:5] = beta * self.parameters.contact  # This is an analogous to the same block init at __init__
         self.M[0:2, 2:5] = self.M[0:2, 2:5] * (S / self.parameters.N)
 
-        H_interval_index = max(0, np.count_nonzero(self.parameters.Hlimit < H) - 1)
-        drate = self.parameters.drate[H_interval_index]
+        H_interval_index = max(0, np.count_nonzero(self.parameters.hospitalization_limit < H) - 1)
+        dead_rate = self.parameters.dead_rate[H_interval_index]
 
-        self.M[8:10, 7:8] = np.array([[1 - drate], [drate]]) * self.parameters.delta[1]
+        self.M[8:10, 7:8] = np.array([[1 - dead_rate], [dead_rate]]) * self.parameters.delta[1]
 
         rhs = self.M.dot(y)
 

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 from scipy.optimize import differential_evolution
 
-from DataStructures import SEIHParameters, InitialConditions, TimeIntervals, RealData
+from DataStructures import SEIHParameters, ODEVariables, TimeIntervals, RealData
 from Utilities import read_data_file
 from SEIH import SEIH, buildY_0
 
@@ -20,23 +20,23 @@ def ode(x: np.ndarray, *args):
     parameters.delta = np.array([1.0 / 9.0, 1.0 / 15.0])
     parameters.N = 100000000
     parameters.In = 0  # casos importados
-    parameters.Hlimit = np.array([0, 1000000])  # limite de hospitalizaciones
+    parameters.hospitalization_limit = np.array([0, 1000000])  # limite de hospitalizaciones
     parameters.k = 0.3  # porcentaje de los que no se reportan
     parameters.beta = x[1:len(time_intervals) + 1]  # entre 0 y (2 o 3)
-    parameters.drate = x[len(time_intervals) + 1:]  # entre 0 y 1 (dead rate)
+    parameters.dead_rate = x[len(time_intervals) + 1:]  # entre 0 y 1 (dead rate)
     parameters.ro = x[0]  # entre 0 y (10 o 20)
 
-    ode_modeling_variables = InitialConditions()
-    ode_modeling_variables.t = pd.to_datetime('01/22/2020')
-    ode_modeling_variables.S = parameters.N  # suceptible (puden infectarse)
-    ode_modeling_variables.E = 0  # expuestos
-    ode_modeling_variables.I1 = 0  # infectados sintomas leves
-    ode_modeling_variables.I2 = 0  # infectados sintomas leves sin reportes
-    ode_modeling_variables.I3 = 0  # infectados sintomas severos
-    ode_modeling_variables.Q = 6  # en sus casas (I1, reportan -> Q)
-    ode_modeling_variables.H = 1  # internados (I3, reportan -> H) [para saber la capacidad del sistema sanitario]
-    ode_modeling_variables.D = 0  # dead
-    ode_modeling_variables.R = 0  # recuperados
+    ode_modeling_variables = ODEVariables()
+    ode_modeling_variables.time = pd.to_datetime('01/22/2020')
+    ode_modeling_variables.susceptible = parameters.N  # suceptible (puden infectarse)
+    ode_modeling_variables.exposed = 0  # expuestos
+    ode_modeling_variables.infected_mild = 0  # infectados sintomas leves
+    ode_modeling_variables.infected_mild_unreported = 0  # infectados sintomas leves sin reportes
+    ode_modeling_variables.infected_severe = 0  # infectados sintomas severos
+    ode_modeling_variables.in_quarantine = 6  # en sus casas (I1, reportan -> Q)
+    ode_modeling_variables.hospitalized = 1  # internados (I3, reportan -> H) [para saber la capacidad del sistema sanitario]
+    ode_modeling_variables.dead = 0  # dead
+    ode_modeling_variables.recovered = 0  # recuperados
     ode_modeling_variables.Rh = 0  # (I2, despues cuarentena -> Rh)
 
     infected_data = read_data_file('testing_resources/cum_world.dat')
@@ -48,8 +48,8 @@ def ode(x: np.ndarray, *args):
 
     seih = SEIH(parameters, time_intervals, x)
 
-    infected_offset: int = ode_modeling_variables.t.toordinal() - real_data.infected['date'][0].toordinal()
-    dead_offset: int = real_data.dead['date'][0].toordinal() - ode_modeling_variables.t.toordinal()
+    infected_offset: int = ode_modeling_variables.time.toordinal() - real_data.infected['date'][0].toordinal()
+    dead_offset: int = real_data.dead['date'][0].toordinal() - ode_modeling_variables.time.toordinal()
     time: pd.Series = real_data.infected['date'][infected_offset:]
     time_span = (time[0].toordinal(), time[len(time) - 1].toordinal())
 
@@ -91,7 +91,7 @@ def main():
                   0.48, 0.22, 0.33, 0.80])  # Optimized values from MATLAB code
 
     number_of_variables = 4
-    bounds = [(2, 4)] * number_of_variables
+    bounds = [(2, 4)] * number_of_variables  # TODO ode variables bounds needs improvement
     result = differential_evolution(ode, bounds)
     print(result)
 

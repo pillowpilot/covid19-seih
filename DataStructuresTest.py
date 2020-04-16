@@ -2,7 +2,7 @@ import unittest
 import numpy as np
 import pandas as pd
 from Utilities import read_data_file
-from DataStructures import SEIHParameters, InitialConditions, TimeIntervals, RealData
+from DataStructures import SEIHParameters, ODEVariables, TimeIntervals, RealData
 
 
 class SEIHParameterTest(unittest.TestCase):
@@ -15,20 +15,20 @@ class SEIHParameterTest(unittest.TestCase):
         param.delta = 1 / np.array([9, 15])
         param.N = 1e8
         param.In = 0
-        param.Hlimit = np.array([0, 10, 50, 100, 500, 1000, 5000])
+        param.hospitalization_limit = np.array([0, 10, 50, 100, 500, 1000, 5000])
         param.ro = 2
         param.k = 1
         param.beta = np.array([9.7e-4, 0.2028, 0.6924, 1, 0])
-        param.drate = np.array([0.1544, 0.2830, 0, 0, 0, 1, 0])
+        param.dead_rate = np.array([0.1544, 0.2830, 0, 0, 0, 1, 0])
 
 
 class InitialConditionsTest(unittest.TestCase):
     def test_usage(self):
-        init = InitialConditions()
-        init.t = pd.to_datetime('01/22/2020')  # Also to_datetime('01/22/2020', format='%m/%d/%Y')
-        init.Q = 6
-        init.H = 1
-        init.D = 0
+        init = ODEVariables()
+        init.time = pd.to_datetime('01/22/2020')  # Also to_datetime('01/22/2020', format='%m/%d/%Y')
+        init.in_quarantine = 6
+        init.hospitalized = 1
+        init.dead = 0
 
 
 class TimeIntervalsTest(unittest.TestCase):

@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 from SEIH import SEIH, buildY_0
-from DataStructures import SEIHParameters, InitialConditions, TimeIntervals, RealData
+from DataStructures import SEIHParameters, ODEVariables, TimeIntervals, RealData
 from Utilities import read_data_file
 
 
@@ -24,23 +24,23 @@ class SEIHTest(unittest.TestCase):
         param.delta = np.array([1.0 / 9.0, 1.0 / 15.0])
         param.N = 100000000
         param.In = 0
-        param.Hlimit = np.array([0, 1000000])
+        param.hospitalization_limit = np.array([0, 1000000])
         param.ro = x[0]
         param.k = 0.3
         param.beta = x[1:len(time_intervals) + 1]
-        param.drate = x[len(time_intervals) + 1:len(time_intervals) * 2 + 1]
+        param.dead_rate = x[len(time_intervals) + 1:len(time_intervals) * 2 + 1]
 
-        initial_conditions = InitialConditions()
-        initial_conditions.t = pd.to_datetime('01/22/2020')
-        initial_conditions.S = param.N
-        initial_conditions.E = 0
-        initial_conditions.I1 = 0
-        initial_conditions.I2 = 0
-        initial_conditions.I3 = 0
-        initial_conditions.Q = 6
-        initial_conditions.H = 1
-        initial_conditions.D = 0
-        initial_conditions.R = 0
+        initial_conditions = ODEVariables()
+        initial_conditions.time = pd.to_datetime('01/22/2020')
+        initial_conditions.susceptible = param.N
+        initial_conditions.exposed = 0
+        initial_conditions.infected_mild = 0
+        initial_conditions.infected_mild_unreported = 0
+        initial_conditions.infected_severe = 0
+        initial_conditions.in_quarantine = 6
+        initial_conditions.hospitalized = 1
+        initial_conditions.dead = 0
+        initial_conditions.recovered = 0
         initial_conditions.Rh = 0
 
         y_0 = buildY_0(initial_conditions, param)
@@ -52,8 +52,8 @@ class SEIHTest(unittest.TestCase):
         recovered_data = read_data_file('testing_resources/rcm_world.dat')
         real_data = RealData(infected_data, dead_data, recovered_data)
 
-        delay_infected: int = initial_conditions.t.toordinal() - real_data.infected['date'][0].toordinal()
-        delay_dead: int = real_data.dead['date'][0].toordinal() - initial_conditions.t.toordinal()
+        delay_infected: int = initial_conditions.time.toordinal() - real_data.infected['date'][0].toordinal()
+        delay_dead: int = real_data.dead['date'][0].toordinal() - initial_conditions.time.toordinal()
         time: pd.Series = real_data.infected['date'][delay_infected:]
         time_span = (time[0].toordinal(), time[len(time) - 1].toordinal())
 
