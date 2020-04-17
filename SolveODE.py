@@ -9,6 +9,10 @@ from Utilities import read_data_file
 from SEIH import SEIH, buildY_0
 
 
+def observer(xk, convergence):
+    print('{} with convergence: {}'.format(xk, convergence))
+
+
 class SolveODE:
     def __init__(self):
         # Initialize all static data (data that is *constant* over all calls by optimizer)
@@ -17,7 +21,8 @@ class SolveODE:
         recovered_data = read_data_file('testing_resources/rcm_world.dat')
         self.real_data: RealData = RealData(infected_data, dead_data, recovered_data)
 
-        self.time_intervals: TimeIntervals = TimeIntervals(['01/22/2020'])
+        self.time_intervals: TimeIntervals = \
+            TimeIntervals(['01/22/2020', '01/28/2020', '02/10/2020', '03/02/2020', '03/22/2020'])
 
         self.parameters: SEIHParameters = SEIHParameters()
         self.parameters.contact = np.array([1.0, 1.0, 0.3])
@@ -30,6 +35,7 @@ class SolveODE:
         self.parameters.hospitalization_limit = np.array([0, 1000000])  # limite de hospitalizaciones
         self.parameters.k = 0.3  # porcentaje de los que no se reportan
 
+        # Load ODE variables initial values
         self.ode_modeling_variables = ODEVariables()
         self.ode_modeling_variables.time = pd.to_datetime('01/22/2020')
         self.ode_modeling_variables.susceptible = self.parameters.N  # suceptible (puden infectarse)
@@ -113,19 +119,20 @@ def main():
     x = np.array([1.76592537, 0.64402601, 0.22258755, 0.38885279])  # From diff_evo
 
     ro_bounds = [(0, 10)]
-    beta_bounds = [(0, 2)]
+    beta_bounds = [(0, 2)] * 5
     dead_rate_bounds = [(0, 1)] * 2
 
     bounds = ro_bounds + beta_bounds + dead_rate_bounds
     number_of_variables = len(bounds)
     solve_ode = SolveODE()
-    result = differential_evolution(solve_ode.ode, bounds)
+    result = differential_evolution(solve_ode.ode, bounds, callback=observer)
     print(result)
     x = result.x
 
     # x = np.random.random(4)
     # print('>> ', x)
-    solve_ode.ode(x, 'plot')
+    #solve_ode.ode(x, 'plot')
+
 
 if __name__ == '__main__':
     main()

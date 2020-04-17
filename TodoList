@@ -12,3 +12,6 @@ solo se optimiza ro, beta y drate
 combinar initial_conditions con =0 con buildY_0
 
 agregar la informacion sobre field_index_mapping y aplicar en todo el proyecto!
+
+con 8 variables optimizandose se consige un error de 8.3,
+pero se necesitó 61 iteraciones y 7467 evaluaciones. Muy lento.
